@@ -40,6 +40,7 @@ export default function LearningEngine() {
 
   const fetchContent = async (topic, subTopic, isReteach) => {
     setIsLoading(true);
+    setContent(null); // Clear old content while loading
     try {
       // In a real RAG system, we'd pass the isReteach flag to the backend
       const data = await generateTopicContent(topic, subTopic);
@@ -51,18 +52,26 @@ export default function LearningEngine() {
     }
   };
 
-  if (!plan || !content) {
-    if (isLoading) {
-      return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
-            <p className="text-slate-500 font-medium">Preparing your lesson...</p>
-          </div>
-        </div>
-      );
+  const handleTopicChange = (index) => {
+    if (index >= 0 && index < plan.subTopics.length) {
+      setCurrentTopicIndex(index);
+      localStorage.setItem('currentTopicIndex', index.toString());
+      localStorage.removeItem('isReteach');
+      fetchContent(plan.topic, plan.subTopics[index].title, false);
     }
-    return null;
+  };
+
+  if (!plan) return null;
+
+  if (isLoading || !content) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500 font-medium">Preparing your lesson...</p>
+        </div>
+      </div>
+    );
   }
 
   const currentSubTopic = plan.subTopics[currentTopicIndex];
@@ -72,12 +81,33 @@ export default function LearningEngine() {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Main Content Area */}
         <div className="flex-grow space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleTopicChange(currentTopicIndex - 1)}
+              disabled={currentTopicIndex === 0}
+              leftIcon={<ChevronLeft size={16} />}
+            >
+              Previous
+            </Button>
+            <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider">
+              <BookOpen size={16} />
+              Topic {currentTopicIndex + 1} of {plan.subTopics.length}
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleTopicChange(currentTopicIndex + 1)}
+              disabled={currentTopicIndex === plan.subTopics.length - 1}
+              rightIcon={<ChevronRight size={16} />}
+            >
+              Next
+            </Button>
+          </div>
+
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider">
-                <BookOpen size={16} />
-                Topic {currentTopicIndex + 1} of {plan.subTopics.length}
-              </div>
               {localStorage.getItem('isReteach') === 'true' && (
                 <div className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-1">
                   <RefreshCw size={12} className="animate-spin-slow" />
@@ -160,27 +190,28 @@ export default function LearningEngine() {
             <h3 className="font-bold text-slate-900 mb-6">Learning Path</h3>
             <div className="space-y-4">
               {plan.subTopics.map((sub, i) => (
-                <div 
+                <button 
                   key={sub.id} 
-                  className={`flex items-center gap-3 p-3 rounded-2xl transition-colors ${
+                  onClick={() => handleTopicChange(i)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all text-left group ${
                     i === currentTopicIndex 
-                      ? 'bg-indigo-50 text-indigo-600' 
+                      ? 'bg-indigo-50 text-indigo-600 shadow-sm' 
                       : i < currentTopicIndex 
-                      ? 'text-emerald-600' 
-                      : 'text-slate-400'
+                      ? 'text-emerald-600 hover:bg-emerald-50' 
+                      : 'text-slate-400 hover:bg-slate-50'
                   }`}
                 >
                   {i < currentTopicIndex ? (
                     <CheckCircle2 size={18} />
                   ) : (
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold ${
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold shrink-0 ${
                       i === currentTopicIndex ? 'border-indigo-600' : 'border-slate-200'
                     }`}>
                       {i + 1}
                     </div>
                   )}
                   <span className="text-sm font-bold truncate">{sub.title}</span>
-                </div>
+                </button>
               ))}
             </div>
           </Card>
