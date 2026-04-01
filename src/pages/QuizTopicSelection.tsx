@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { Input } from '../components/ui/Input';
+import { Card } from '../components/ui/Card';
 
 const TOPICS = [
   {
@@ -102,14 +104,12 @@ export default function QuizTopicSelection() {
           <h1 className="text-3xl font-extrabold text-slate-900">Knowledge Assessment</h1>
           <p className="text-slate-500 mt-1">Select a topic to test your skills and update your learning path.</p>
         </div>
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-          <input 
-            type="text" 
+        <div className="w-full sm:w-80">
+          <Input 
             placeholder="Search topics..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-full sm:w-80 shadow-sm"
+            icon={<Search size={20} />}
           />
         </div>
       </div>
@@ -123,50 +123,52 @@ export default function QuizTopicSelection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
             onClick={() => navigate('/pre-evaluation')}
-            className="bg-white rounded-[32px] border border-slate-200 p-8 hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/5 transition-all cursor-pointer group relative overflow-hidden"
+            className="group cursor-pointer"
           >
-            <div className={cn(
-              "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 duration-300",
-              topic.bg,
-              topic.color
-            )}>
-              <topic.icon size={28} />
-            </div>
-
-            <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
-              {topic.title}
-            </h3>
-            <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              {topic.description}
-            </p>
-
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-50">
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 text-slate-400 mb-1">
-                  <HelpCircle size={12} />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">Items</span>
-                </div>
-                <span className="text-sm font-bold text-slate-700">{topic.questions}</span>
+            <Card className="p-8 hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/5 transition-all relative overflow-hidden h-full rounded-[32px]">
+              <div className={cn(
+                "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 duration-300",
+                topic.bg,
+                topic.color
+              )}>
+                <topic.icon size={28} />
               </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 text-slate-400 mb-1">
-                  <Clock size={12} />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">Time</span>
-                </div>
-                <span className="text-sm font-bold text-slate-700">{topic.time}</span>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 text-slate-400 mb-1">
-                  <BarChart3 size={12} />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">Level</span>
-                </div>
-                <span className="text-sm font-bold text-slate-700">{topic.difficulty}</span>
-              </div>
-            </div>
 
-            <div className="absolute top-8 right-8 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all">
-              <ChevronRight size={24} />
-            </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                {topic.title}
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed mb-8">
+                {topic.description}
+              </p>
+
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-50">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1 text-slate-400 mb-1">
+                    <HelpCircle size={12} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Items</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">{topic.questions}</span>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1 text-slate-400 mb-1">
+                    <Clock size={12} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Time</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">{topic.time}</span>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1 text-slate-400 mb-1">
+                    <BarChart3 size={12} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Level</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">{topic.difficulty}</span>
+                </div>
+              </div>
+
+              <div className="absolute top-8 right-8 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all">
+                <ChevronRight size={24} />
+              </div>
+            </Card>
           </motion.div>
         ))}
       </div>

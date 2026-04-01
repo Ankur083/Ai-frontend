@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
 export default function LearningVideo() {
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ export default function LearningVideo() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm">
+          <Card className="p-8 rounded-[32px]">
             <div className="flex items-center gap-2 mb-4">
               <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded uppercase tracking-wider">Module 1</span>
               <span className="text-slate-400 text-xs">•</span>
@@ -75,7 +77,7 @@ export default function LearningVideo() {
             <p className="text-slate-500 leading-relaxed">
               In this lesson, we explore the lifecycle of a functional component and how the useEffect hook allows us to synchronize with external systems. We'll cover dependency arrays, cleanup functions, and common pitfalls.
             </p>
-          </div>
+          </Card>
         </div>
 
         {/* Sidebar: Resources & Next */}
@@ -83,16 +85,16 @@ export default function LearningVideo() {
           <div className="bg-indigo-600 rounded-[32px] p-8 text-white shadow-xl shadow-indigo-200">
             <h3 className="text-xl font-bold mb-4">Ready for the Quiz?</h3>
             <p className="text-indigo-100 text-sm mb-8">Test your knowledge on what you just learned to unlock the next module.</p>
-            <button 
+            <Button 
               onClick={() => navigate('/quiz')}
-              className="w-full py-4 bg-white text-indigo-600 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-50 transition-all"
+              className="w-full bg-white text-indigo-600 hover:bg-indigo-50"
+              icon={<ArrowRight size={20} />}
             >
               Take Module Quiz
-              <ArrowRight size={20} />
-            </button>
+            </Button>
           </div>
 
-          <div className="bg-white rounded-[32px] border border-slate-200 p-6 shadow-sm">
+          <Card className="p-6 rounded-[32px]">
             <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
               <FileText size={20} className="text-indigo-600" />
               Lesson Resources
@@ -103,7 +105,7 @@ export default function LearningVideo() {
                 { title: 'Source Code (GitHub)', icon: BookOpen },
                 { title: 'Discussion Forum', icon: MessageSquare },
               ].map((res, i) => (
-                <button key={i} className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all group">
+                <button key={i} className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all group text-left">
                   <div className="flex items-center gap-3">
                     <res.icon size={18} className="text-slate-400 group-hover:text-indigo-600" />
                     <span className="text-sm font-semibold text-slate-700">{res.title}</span>
@@ -112,7 +114,7 @@ export default function LearningVideo() {
                 </button>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  GraduationCap, 
   ChevronRight, 
   ChevronLeft, 
   Target, 
@@ -10,8 +9,10 @@ import {
   CheckCircle2,
   Sparkles
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
 
 const STEPS = [
   {
@@ -99,130 +100,127 @@ export default function Onboarding() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="bg-white rounded-[40px] shadow-xl shadow-slate-200/50 p-10 sm:p-16 border border-slate-100 text-center"
         >
-          <div className={cn(
-            "w-20 h-20 rounded-[28px] flex items-center justify-center text-white mx-auto mb-8 shadow-xl",
-            step.color
-          )}>
-            <step.icon size={40} />
-          </div>
+          <Card className="p-10 sm:p-16 text-center rounded-[40px]">
+            <div className={cn(
+              "w-20 h-20 rounded-[28px] flex items-center justify-center text-white mx-auto mb-8 shadow-xl",
+              step.color
+            )}>
+              <step.icon size={40} />
+            </div>
 
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-4">{step.title}</h1>
-          <p className="text-slate-500 text-lg mb-12">{step.description}</p>
+            <h1 className="text-3xl font-extrabold text-slate-900 mb-4">{step.title}</h1>
+            <p className="text-slate-500 text-lg mb-12">{step.description}</p>
 
-          {/* Step Content */}
-          <div className="min-h-[240px] flex items-center justify-center">
-            {currentStep === 0 && (
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl text-left border border-slate-100">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
-                    <Sparkles size={20} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-800">Personalized Path</p>
-                    <p className="text-sm text-slate-500">We adjust content based on your progress.</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl text-left border border-slate-100">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm">
-                    <Target size={20} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-800">Goal Tracking</p>
-                    <p className="text-sm text-slate-500">Set milestones and track your achievements.</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 1 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                {GOALS.map((goal) => (
-                  <button
-                    key={goal.id}
-                    onClick={() => toggleGoal(goal.id)}
-                    className={cn(
-                      "p-6 rounded-3xl border-2 transition-all text-left flex items-center gap-4 group",
-                      selectedGoals.includes(goal.id)
-                        ? "border-indigo-600 bg-indigo-50/50"
-                        : "border-slate-100 bg-slate-50 hover:border-slate-200"
-                    )}
-                  >
-                    <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                      selectedGoals.includes(goal.id) ? "bg-indigo-600 text-white" : "bg-white text-slate-400 group-hover:text-slate-600"
-                    )}>
-                      <goal.icon size={20} />
+            {/* Step Content */}
+            <div className="min-h-[240px] flex items-center justify-center">
+              {currentStep === 0 && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl text-left border border-slate-100">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
+                      <Sparkles size={20} />
                     </div>
-                    <span className={cn(
-                      "font-bold",
-                      selectedGoals.includes(goal.id) ? "text-indigo-900" : "text-slate-600"
-                    )}>{goal.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div className="space-y-4 w-full">
-                {LEVELS.map((level) => (
-                  <button
-                    key={level.id}
-                    onClick={() => setSelectedLevel(level.id)}
-                    className={cn(
-                      "w-full p-6 rounded-3xl border-2 transition-all text-left flex items-center justify-between group",
-                      selectedLevel === level.id
-                        ? "border-indigo-600 bg-indigo-50/50"
-                        : "border-slate-100 bg-slate-50 hover:border-slate-200"
-                    )}
-                  >
                     <div>
-                      <p className={cn(
-                        "font-bold",
-                        selectedLevel === level.id ? "text-indigo-900" : "text-slate-800"
-                      )}>{level.label}</p>
-                      <p className="text-sm text-slate-500">{level.desc}</p>
+                      <p className="font-bold text-slate-800">Personalized Path</p>
+                      <p className="text-sm text-slate-500">We adjust content based on your progress.</p>
                     </div>
-                    {selectedLevel === level.id && (
-                      <CheckCircle2 size={24} className="text-indigo-600" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl text-left border border-slate-100">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm">
+                      <Target size={20} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800">Goal Tracking</p>
+                      <p className="text-sm text-slate-500">Set milestones and track your achievements.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-          {/* Footer Actions */}
-          <div className="mt-16 flex items-center justify-between">
-            <button
-              onClick={handlePrev}
-              className={cn(
-                "flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-100 transition-all",
-                currentStep === 0 && "opacity-0 pointer-events-none"
+              {currentStep === 1 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                  {GOALS.map((goal) => (
+                    <button
+                      key={goal.id}
+                      onClick={() => toggleGoal(goal.id)}
+                      className={cn(
+                        "p-6 rounded-3xl border-2 transition-all text-left flex items-center gap-4 group",
+                        selectedGoals.includes(goal.id)
+                          ? "border-indigo-600 bg-indigo-50/50"
+                          : "border-slate-100 bg-slate-50 hover:border-slate-200"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
+                        selectedGoals.includes(goal.id) ? "bg-indigo-600 text-white" : "bg-white text-slate-400 group-hover:text-slate-600"
+                      )}>
+                        <goal.icon size={20} />
+                      </div>
+                      <span className={cn(
+                        "font-bold",
+                        selectedGoals.includes(goal.id) ? "text-indigo-900" : "text-slate-600"
+                      )}>{goal.label}</span>
+                    </button>
+                  ))}
+                </div>
               )}
-            >
-              <ChevronLeft size={20} />
-              Back
-            </button>
-            
-            <button
-              onClick={handleNext}
-              disabled={
-                (currentStep === 1 && selectedGoals.length === 0) ||
-                (currentStep === 2 && !selectedLevel)
-              }
-              className={cn(
-                "flex items-center gap-2 px-10 py-4 rounded-2xl font-bold transition-all shadow-lg",
-                ((currentStep === 1 && selectedGoals.length === 0) || (currentStep === 2 && !selectedLevel))
-                  ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                  : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200"
+
+              {currentStep === 2 && (
+                <div className="space-y-4 w-full">
+                  {LEVELS.map((level) => (
+                    <button
+                      key={level.id}
+                      onClick={() => setSelectedLevel(level.id)}
+                      className={cn(
+                        "w-full p-6 rounded-3xl border-2 transition-all text-left flex items-center justify-between group",
+                        selectedLevel === level.id
+                          ? "border-indigo-600 bg-indigo-50/50"
+                          : "border-slate-100 bg-slate-50 hover:border-slate-200"
+                      )}
+                    >
+                      <div>
+                        <p className={cn(
+                          "font-bold",
+                          selectedLevel === level.id ? "text-indigo-900" : "text-slate-800"
+                        )}>{level.label}</p>
+                        <p className="text-sm text-slate-500">{level.desc}</p>
+                      </div>
+                      {selectedLevel === level.id && (
+                        <CheckCircle2 size={24} className="text-indigo-600" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               )}
-            >
-              {currentStep === STEPS.length - 1 ? 'Get Started' : 'Continue'}
-              <ChevronRight size={20} />
-            </button>
-          </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="mt-16 flex items-center justify-between">
+              <Button
+                variant="ghost"
+                onClick={handlePrev}
+                className={cn(
+                  "px-6",
+                  currentStep === 0 && "opacity-0 pointer-events-none"
+                )}
+                icon={<ChevronLeft size={20} />}
+              >
+                Back
+              </Button>
+              
+              <Button
+                onClick={handleNext}
+                disabled={
+                  (currentStep === 1 && selectedGoals.length === 0) ||
+                  (currentStep === 2 && !selectedLevel)
+                }
+                className="px-10"
+                icon={<ChevronRight size={20} />}
+              >
+                {currentStep === STEPS.length - 1 ? 'Get Started' : 'Continue'}
+              </Button>
+            </div>
+          </Card>
         </motion.div>
       </div>
     </div>

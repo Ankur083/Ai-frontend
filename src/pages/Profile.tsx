@@ -15,8 +15,11 @@ import {
   Zap
 } from 'lucide-react';
 import { MOCK_USER } from '../constants';
-
 import { cn } from '../lib/utils';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { StatCard } from '../components/shared/StatCard';
+import { Input } from '../components/ui/Input';
 
 export default function Profile() {
   return (
@@ -24,7 +27,7 @@ export default function Profile() {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Profile Sidebar */}
         <div className="w-full md:w-80 shrink-0 space-y-6">
-          <div className="bg-white rounded-[32px] border border-slate-200 p-8 text-center shadow-sm">
+          <Card className="p-8 text-center">
             <div className="relative inline-block mb-6">
               <img 
                 src={MOCK_USER.avatar} 
@@ -42,9 +45,9 @@ export default function Profile() {
               <Shield size={16} />
               <span>Verified Student</span>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-[32px] border border-slate-200 p-4 shadow-sm overflow-hidden">
+          <Card padding="none" className="p-4 overflow-hidden">
             {[
               { icon: User, label: 'Personal Info', active: true },
               { icon: Bell, label: 'Notifications', active: false },
@@ -66,7 +69,7 @@ export default function Profile() {
                 <ChevronRight size={16} className={cn(item.active ? "opacity-100" : "opacity-0 group-hover:opacity-100")} />
               </button>
             ))}
-          </div>
+          </Card>
         </div>
 
         {/* Profile Content */}
@@ -74,51 +77,40 @@ export default function Profile() {
           {/* Stats Overview */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'Courses', value: MOCK_USER.stats.coursesCompleted, icon: BookOpen, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'Avg Score', value: `${MOCK_USER.stats.averageScore}%`, icon: Trophy, color: 'text-yellow-600', bg: 'bg-yellow-50' },
-              { label: 'Hours', value: MOCK_USER.stats.learningHours, icon: Clock, color: 'text-purple-600', bg: 'bg-purple-50' },
-              { label: 'Streak', value: MOCK_USER.stats.streak, icon: Zap, color: 'text-orange-600', bg: 'bg-orange-50' },
+              { label: 'Courses', value: MOCK_USER.stats.coursesCompleted, icon: BookOpen, color: 'bg-blue-500' },
+              { label: 'Avg Score', value: `${MOCK_USER.stats.averageScore}%`, icon: Trophy, color: 'bg-yellow-500' },
+              { label: 'Hours', value: MOCK_USER.stats.learningHours, icon: Clock, color: 'bg-purple-500' },
+              { label: 'Streak', value: MOCK_USER.stats.streak, icon: Zap, color: 'bg-orange-500' },
             ].map((stat, i) => (
-              <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm text-center">
-                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3", stat.bg, stat.color)}>
-                  <stat.icon size={20} />
-                </div>
-                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">{stat.label}</p>
-              </div>
+              <StatCard 
+                key={i} 
+                label={stat.label}
+                value={stat.value}
+                icon={<stat.icon size={24} />}
+                color={stat.color}
+                index={i} 
+              />
             ))}
           </div>
 
           {/* Form */}
-          <div className="bg-white rounded-[32px] border border-slate-200 p-8 sm:p-10 shadow-sm">
+          <Card className="p-8 sm:p-10">
             <h3 className="text-xl font-bold text-slate-900 mb-8">Personal Information</h3>
             <form className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">First Name</label>
-                <input 
-                  type="text" 
-                  defaultValue="Alex"
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-800"
+              <Input 
+                label="First Name"
+                defaultValue="Alex"
+              />
+              <Input 
+                label="Last Name"
+                defaultValue="Johnson"
+              />
+              <div className="sm:col-span-2">
+                <Input 
+                  label="Email Address"
+                  defaultValue={MOCK_USER.email}
+                  icon={<Mail size={20} />}
                 />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Last Name</label>
-                <input 
-                  type="text" 
-                  defaultValue="Johnson"
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-800"
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input 
-                    type="email" 
-                    defaultValue={MOCK_USER.email}
-                    className="w-full pl-14 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-800"
-                  />
-                </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <label className="text-sm font-bold text-slate-700 ml-1">Bio</label>
@@ -129,12 +121,12 @@ export default function Profile() {
                 />
               </div>
               <div className="sm:col-span-2 pt-4">
-                <button className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                <Button size="lg">
                   Save Changes
-                </button>
+                </Button>
               </div>
             </form>
-          </div>
+          </Card>
         </div>
       </div>
     </div>

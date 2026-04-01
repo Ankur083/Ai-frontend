@@ -5,7 +5,6 @@ import {
   Target, 
   Clock, 
   ArrowRight, 
-  RotateCcw,
   CheckCircle2,
   XCircle,
   TrendingUp,
@@ -13,14 +12,15 @@ import {
   Play,
   Share2
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { StatCard } from '../components/shared/StatCard';
 
 export default function Result() {
   const navigate = useNavigate();
   const score = 85;
-  const total = 100;
   const correct = 8;
   const wrong = 2;
   const time = '12:45';
@@ -28,7 +28,7 @@ export default function Result() {
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       {/* Hero Result Section */}
-      <div className="bg-white rounded-[40px] border border-slate-200 p-8 sm:p-12 shadow-sm relative overflow-hidden">
+      <Card className="p-8 sm:p-12 relative overflow-hidden rounded-[40px]">
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 blur-3xl opacity-50"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-50 rounded-full -ml-32 -mb-32 blur-3xl opacity-50"></div>
         
@@ -47,27 +47,28 @@ export default function Result() {
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-8 w-full max-w-3xl">
             {[
               { label: 'Score', value: `${score}%`, icon: Target, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-              { label: 'Correct', value: correct, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { label: 'Incorrect', value: wrong, icon: XCircle, color: 'text-red-600', bg: 'bg-red-50' },
+              { label: 'Correct', value: correct.toString(), icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Incorrect', value: wrong.toString(), icon: XCircle, color: 'text-red-600', bg: 'bg-red-50' },
               { label: 'Time Spent', value: time, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
             ].map((stat, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-3", stat.bg, stat.color)}>
-                  <stat.icon size={24} />
-                </div>
-                <span className="text-2xl font-bold text-slate-800">{stat.value}</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">{stat.label}</span>
-              </div>
+              <StatCard
+                key={i}
+                label={stat.label}
+                value={stat.value}
+                icon={<stat.icon size={24} />}
+                color={stat.color}
+                bg={stat.bg}
+              />
             ))}
           </div>
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Performance Analysis */}
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-2xl font-bold text-slate-900">Adaptive Insights</h2>
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 space-y-8">
+          <Card className="p-8 space-y-8 rounded-3xl">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
@@ -100,42 +101,49 @@ export default function Result() {
                 </p>
               </div>
             </div>
-          </div>
+          </Card>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button 
+            <Button 
               onClick={() => navigate('/learning-video')}
-              className="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
+              className="flex-1 py-4"
+              icon={<ArrowRight size={20} />}
             >
               Next Learning Module
-              <ArrowRight size={20} />
-            </button>
-            <button 
+            </Button>
+            <Button 
+              variant="secondary"
               onClick={() => navigate('/dashboard')}
-              className="flex-1 bg-white text-slate-700 border border-slate-200 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+              className="flex-1 py-4"
             >
               Back to Dashboard
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Sidebar Info */}
         <div className="space-y-8">
-          <div className="bg-slate-900 rounded-3xl p-8 text-white">
+          <Card className="p-8 bg-slate-900 text-white rounded-3xl">
             <h3 className="text-xl font-bold mb-4">Share Achievement</h3>
             <p className="text-slate-400 text-sm mb-6">Show off your progress to your peers and instructors.</p>
             <div className="space-y-3">
-              <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
-                <Share2 size={18} />
+              <Button 
+                variant="ghost" 
+                className="w-full py-3 bg-white/10 hover:bg-white/20 text-white"
+                icon={<Share2 size={18} />}
+              >
                 Share on LinkedIn
-              </button>
-              <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full py-3 bg-white/10 hover:bg-white/20 text-white"
+              >
                 Download Certificate
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-3xl border border-slate-200 p-6">
+          <Card className="p-6 rounded-3xl">
             <h3 className="font-bold text-slate-900 mb-4">Next Steps</h3>
             <div className="space-y-4">
               {[
@@ -154,7 +162,7 @@ export default function Result() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>

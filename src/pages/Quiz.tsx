@@ -5,11 +5,13 @@ import {
   HelpCircle, 
   ChevronRight, 
   ChevronLeft, 
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight
+  CheckCircle2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../lib/utils';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { ProgressBar } from '../components/ui/ProgressBar';
 
 const MOCK_QUIZ = {
   title: 'React Fundamentals Assessment',
@@ -49,8 +51,6 @@ const MOCK_QUIZ = {
     }
   ]
 };
-
-import { cn } from '../lib/utils';
 
 export default function Quiz() {
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
@@ -111,7 +111,7 @@ export default function Quiz() {
             className="space-y-8"
           >
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <Card className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl">
               <div>
                 <h1 className="text-xl font-bold text-slate-900">{MOCK_QUIZ.title}</h1>
                 <p className="text-slate-500 text-sm mt-1">Question {currentQuestion + 1} of {MOCK_QUIZ.questions.length}</p>
@@ -122,19 +122,13 @@ export default function Quiz() {
                   <span className="font-mono font-bold text-slate-700">{formatTime(timeLeft)}</span>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Progress Bar */}
-            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                className="h-full bg-indigo-600 rounded-full"
-              />
-            </div>
+            <ProgressBar value={progress} />
 
             {/* Question Card */}
-            <div className="bg-white p-8 sm:p-12 rounded-[40px] border border-slate-200 shadow-sm relative overflow-hidden">
+            <Card className="p-8 sm:p-12 rounded-[40px] relative overflow-hidden">
               <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600"></div>
               
               <div className="flex items-start gap-4 mb-8">
@@ -176,32 +170,31 @@ export default function Quiz() {
                   </button>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Footer Actions */}
             <div className="flex items-center justify-between">
-              <button
+              <Button
+                variant="ghost"
                 onClick={handlePrev}
                 disabled={currentQuestion === 0}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-100 disabled:opacity-0 transition-all"
+                className={cn(
+                  "px-6",
+                  currentQuestion === 0 && "opacity-0 pointer-events-none"
+                )}
+                icon={<ChevronLeft size={20} />}
               >
-                <ChevronLeft size={20} />
                 Previous
-              </button>
+              </Button>
               
-              <button
+              <Button
                 onClick={handleNext}
                 disabled={selectedOption === null}
-                className={cn(
-                  "flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all shadow-lg",
-                  selectedOption === null 
-                    ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
-                    : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200"
-                )}
+                className="px-8"
+                icon={<ChevronRight size={20} />}
               >
                 {currentQuestion === MOCK_QUIZ.questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
-                <ChevronRight size={20} />
-              </button>
+              </Button>
             </div>
           </motion.div>
         ) : (
