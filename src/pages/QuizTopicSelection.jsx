@@ -89,9 +89,27 @@ const TOPICS = [
 
 export default function QuizTopicSelection() {
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [customTopics, setCustomTopics] = React.useState([]);
   const navigate = useNavigate();
 
-  const filteredTopics = TOPICS.filter(topic => 
+  React.useEffect(() => {
+    const stored = localStorage.getItem('customTopics');
+    if (stored) {
+      setCustomTopics(JSON.parse(stored));
+    }
+  }, []);
+
+  const allTopics = [
+    ...TOPICS,
+    ...customTopics.map(topic => ({
+      ...topic,
+      icon: Brain, // Default icon for AI suggested topics
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50'
+    }))
+  ];
+
+  const filteredTopics = allTopics.filter(topic => 
     topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     topic.description.toLowerCase().includes(searchQuery.toLowerCase())
   );

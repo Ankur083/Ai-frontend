@@ -15,9 +15,21 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { StatCard } from '../components/shared/StatCard';
 import { CourseCard } from '../components/shared/CourseCard';
+import AIChat from '../components/AIChat';
+import { MessageSquare, Sparkles, Target } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const [customCount, setCustomCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const stored = localStorage.getItem('customTopics');
+    if (stored) {
+      setCustomCount(JSON.parse(stored).length);
+    }
+  }, []);
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -31,11 +43,40 @@ export default function Dashboard() {
             <Zap size={20} />
             <span>{MOCK_USER.stats.streak} Day Streak</span>
           </div>
-          <Button onClick={() => navigate('/quiz-topics')}>
-            Continue Learning
+          <Button 
+            variant="outline" 
+            className="rounded-xl border-indigo-100 text-indigo-600 hover:bg-indigo-50"
+            onClick={() => navigate('/goal-input')}
+            icon={<Target size={18} />}
+          >
+            Set Goal
           </Button>
+          <Button 
+            variant="outline" 
+            className="rounded-xl border-indigo-100 text-indigo-600 hover:bg-indigo-50"
+            onClick={() => setIsChatOpen(true)}
+            icon={<MessageSquare size={18} />}
+          >
+            AI Chat
+          </Button>
+          <div className="relative">
+            <Button onClick={() => navigate('/quiz-topics')}>
+              Continue Learning
+            </Button>
+            {customCount > 0 && (
+              <span className="absolute -top-2 -right-2 w-6 h-6 bg-indigo-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-bounce">
+                {customCount}
+              </span>
+            )}
+          </div>
         </div>
       </div>
+
+      <AIChat 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        onCourseAdded={(count) => setCustomCount(count)}
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -59,6 +100,26 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Continue Learning */}
         <div className="lg:col-span-2 space-y-6">
+          {/* New Goal Card */}
+          <Card className="p-8 bg-gradient-to-br from-indigo-600 to-violet-700 text-white border-none shadow-xl shadow-indigo-200 relative overflow-hidden group">
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-2 text-center md:text-left">
+                <h2 className="text-2xl font-bold">What's your next learning goal?</h2>
+                <p className="text-indigo-100 max-w-md">Tell our AI what you want to learn, and we'll build a personalized path for you.</p>
+              </div>
+              <Button 
+                onClick={() => navigate('/goal-input')}
+                className="bg-white text-indigo-600 hover:bg-indigo-50 px-8 py-6 rounded-2xl font-bold text-lg shadow-lg group-hover:scale-105 transition-transform"
+                rightIcon={<Sparkles size={20} />}
+              >
+                Set New Goal
+              </Button>
+            </div>
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/20 rounded-full -ml-10 -mb-10 blur-2xl"></div>
+          </Card>
+
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900">Continue Learning</h2>
             <Link to="/courses" className="text-indigo-600 text-sm font-bold hover:underline">View All</Link>
