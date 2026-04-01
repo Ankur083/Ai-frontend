@@ -9,15 +9,18 @@ import {
   Target, 
   Zap, 
   Sparkles,
-  Edit3
+  Edit3,
+  Loader2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { cn } from '../lib/utils';
+import { generateStudyPlan } from '../lib/gemini';
 
 export default function StudyPlan() {
   const [plan, setPlan] = React.useState(null);
+  const [isUpdating, setIsUpdating] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -32,13 +35,42 @@ export default function StudyPlan() {
   if (!plan) return null;
 
   const handleConfirm = () => {
+    // Save to customTopics so it appears in "My Courses" / "Quiz Topics"
+    const stored = localStorage.getItem('customTopics');
+    const customTopics = stored ? JSON.parse(stored) : [];
+    
+    // Check if already exists
+    if (!customTopics.find(t => t.title === plan.topic)) {
+      const newTopic = {
+        id: `goal-${Date.now()}`,
+        title: plan.topic,
+        description: `Master ${plan.topic} with a personalized AI-generated curriculum.`,
+        questions: 10,
+        time: '20 min',
+        difficulty: 'Intermediate',
+        isCustom: true,
+        progress: 0,
+        instructor: 'AI Assistant'
+      };
+      localStorage.setItem('customTopics', JSON.stringify([...customTopics, newTopic]));
+    }
+
     // Proceed to pre-evaluation
     navigate('/pre-evaluation');
   };
 
-  const handleUpdate = () => {
-    // Go back to update the goal
-    navigate('/goal-input');
+  const handleUpdate = async () => {
+    // Re-generate the study plan for the same topic
+    setIsUpdating(true);
+    try {
+      const newPlan = await generateStudyPlan(plan.topic);
+      localStorage.setItem('currentStudyPlan', JSON.stringify(newPlan));
+      setPlan(newPlan);
+    } catch (error) {
+      console.error("Failed to update study plan:", error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -61,10 +93,15 @@ export default function StudyPlan() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="ghost" onClick={handleUpdate} icon={<Edit3 size={18} />}>
-            Update Goal
+          <Button 
+            variant="ghost" 
+            onClick={handleUpdate} 
+            disabled={isUpdating}
+            leftIcon={isUpdating ? <Loader2 size={18} className="animate-spin" /> : <Edit3 size={18} />}
+          >
+            {isUpdating ? 'Updating...' : 'Regenerate Path'}
           </Button>
-          <Button onClick={handleConfirm} icon={<ArrowRight size={18} />}>
+          <Button onClick={handleConfirm} disabled={isUpdating} leftIcon={<ArrowRight size={18} />}>
             Confirm & Start
           </Button>
         </div>

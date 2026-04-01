@@ -4,9 +4,13 @@ import {
   Clock, 
   Trophy, 
   Zap, 
-  ArrowRight,
-  CheckCircle2,
-  TrendingUp
+  ArrowRight, 
+  CheckCircle2, 
+  TrendingUp,
+  MessageSquare,
+  Sparkles,
+  Target,
+  RefreshCw
 } from 'lucide-react';
 import { MOCK_COURSES, MOCK_USER } from '../constants';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,19 +20,51 @@ import { Card } from '../components/ui/Card';
 import { StatCard } from '../components/shared/StatCard';
 import { CourseCard } from '../components/shared/CourseCard';
 import AIChat from '../components/AIChat';
-import { MessageSquare, Sparkles, Target } from 'lucide-react';
+import { generateStudyPlan } from '../lib/gemini';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = React.useState(false);
   const [customCount, setCustomCount] = React.useState(0);
+  const [customTopics, setCustomTopics] = React.useState([]);
+  const [isUpdating, setIsUpdating] = React.useState(false);
 
   React.useEffect(() => {
     const stored = localStorage.getItem('customTopics');
     if (stored) {
-      setCustomCount(JSON.parse(stored).length);
+      const parsed = JSON.parse(stored);
+      setCustomCount(parsed.length);
+      setCustomTopics(parsed);
     }
   }, []);
+
+  const handleRefreshPath = async () => {
+    const storedPlan = localStorage.getItem('currentStudyPlan');
+    if (!storedPlan) return;
+    
+    const plan = JSON.parse(storedPlan);
+    setIsUpdating(true);
+    try {
+      const newPlan = await generateStudyPlan(plan.topic);
+      localStorage.setItem('currentStudyPlan', JSON.stringify(newPlan));
+      // Optionally show a success toast or message
+    } catch (error) {
+      console.error("Failed to refresh path:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Combine mock courses with custom topics for "Continue Learning"
+  const allCourses = [
+    ...MOCK_COURSES,
+    ...customTopics.map(topic => ({
+      ...topic,
+      thumbnail: `https://picsum.photos/seed/${topic.title}/800/450`,
+      progress: topic.progress || 0,
+      category: 'AI Personalized'
+    }))
+  ].sort((a, b) => (b.progress || 0) - (a.progress || 0));
 
   return (
     <div className="space-y-8">
@@ -47,7 +83,7 @@ export default function Dashboard() {
             variant="outline" 
             className="rounded-xl border-indigo-100 text-indigo-600 hover:bg-indigo-50"
             onClick={() => navigate('/goal-input')}
-            icon={<Target size={18} />}
+            leftIcon={<Target size={18} />}
           >
             Set Goal
           </Button>
@@ -55,7 +91,7 @@ export default function Dashboard() {
             variant="outline" 
             className="rounded-xl border-indigo-100 text-indigo-600 hover:bg-indigo-50"
             onClick={() => setIsChatOpen(true)}
-            icon={<MessageSquare size={18} />}
+            leftIcon={<MessageSquare size={18} />}
           >
             AI Chat
           </Button>
@@ -75,7 +111,11 @@ export default function Dashboard() {
       <AIChat 
         isOpen={isChatOpen} 
         onClose={() => setIsChatOpen(false)} 
-        onCourseAdded={(count) => setCustomCount(count)}
+        onCourseAdded={(count) => {
+          setCustomCount(count);
+          const stored = localStorage.getItem('customTopics');
+          if (stored) setCustomTopics(JSON.parse(stored));
+        }}
       />
 
       {/* Stats Grid */}
@@ -126,7 +166,7 @@ export default function Dashboard() {
           </div>
           
           <div className="space-y-4">
-            {MOCK_COURSES.slice(0, 2).map((course) => (
+            {allCourses.slice(0, 3).map((course) => (
               <CourseCard key={course.id} course={course} variant="horizontal" />
             ))}
           </div>
@@ -135,7 +175,7 @@ export default function Dashboard() {
           <div className="pt-4">
             <h2 className="text-xl font-bold text-slate-900 mb-6">Recommended for You</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {MOCK_COURSES.slice(2, 4).map((course, i) => (
+              {allCourses.slice(3, 5).map((course, i) => (
                 <CourseCard key={course.id} course={course} index={i} />
               ))}
             </div>
@@ -147,7 +187,17 @@ export default function Dashboard() {
           {/* Adaptive Path */}
           <Card variant="dark" className="p-8 relative overflow-hidden shadow-xl shadow-indigo-200 bg-indigo-600">
             <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-2">Adaptive Path</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-bold">Adaptive Path</h3>
+                <button 
+                  onClick={handleRefreshPath}
+                  disabled={isUpdating}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                  title="Refresh Path"
+                >
+                  <RefreshCw size={18} className={cn(isUpdating && "animate-spin")} />
+                </button>
+              </div>
               <p className="text-indigo-100 text-sm mb-6">Based on your recent quiz, we've adjusted your curriculum.</p>
               
               <div className="space-y-4">
@@ -176,6 +226,7 @@ export default function Dashboard() {
                 variant="outline" 
                 className="w-full mt-8 text-indigo-600 border-none hover:bg-indigo-50"
                 rightIcon={<ArrowRight size={18} />}
+                onClick={() => navigate('/learning-engine')}
               >
                 Start Next Lesson
               </Button>
