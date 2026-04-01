@@ -24,7 +24,7 @@ export default function Layout({ children }) {
     { icon: User, label: 'Profile', path: '/profile' },
   ];
 
-  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password', '/onboarding', '/pre-evaluation', '/quiz-topics'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password', '/pre-evaluation', '/quiz-topics'].includes(location.pathname);
 
   if (isAuthPage) return <>{children}</>;
 

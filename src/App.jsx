@@ -9,7 +9,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import Onboarding from './pages/Onboarding';
 import GoalInput from './pages/GoalInput';
 import StudyPlan from './pages/StudyPlan';
 import PreEvaluation from './pages/PreEvaluation';
@@ -29,7 +28,6 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/goal-input" element={<GoalInput />} />
           <Route path="/study-plan" element={<StudyPlan />} />
           <Route path="/pre-evaluation" element={<PreEvaluation />} />

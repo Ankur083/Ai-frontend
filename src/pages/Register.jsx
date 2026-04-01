@@ -10,7 +10,7 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/onboarding');
+    navigate('/dashboard');
   };
 
   return (
