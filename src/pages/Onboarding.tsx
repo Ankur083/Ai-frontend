@@ -60,7 +60,7 @@ export default function Onboarding() {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigate('/dashboard');
+      navigate('/quiz-topics');
     }
   };
 

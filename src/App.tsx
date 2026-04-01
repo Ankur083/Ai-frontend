@@ -10,6 +10,8 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Onboarding from './pages/Onboarding';
+import PreEvaluation from './pages/PreEvaluation';
+import LearningVideo from './pages/LearningVideo';
 import Dashboard from './pages/Dashboard';
 import Quiz from './pages/Quiz';
 import QuizTopicSelection from './pages/QuizTopicSelection';
@@ -25,6 +27,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/pre-evaluation" element={<PreEvaluation />} />
+          <Route path="/learning-video" element={<LearningVideo />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />

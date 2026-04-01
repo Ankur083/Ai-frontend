@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
     { icon: User, label: 'Profile', path: '/profile' },
   ];
 
-  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password', '/onboarding'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password', '/onboarding', '/pre-evaluation', '/quiz-topics'].includes(location.pathname);
 
   if (isAuthPage) return <>{children}</>;
 

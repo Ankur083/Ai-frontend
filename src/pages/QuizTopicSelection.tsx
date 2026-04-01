@@ -122,7 +122,7 @@ export default function QuizTopicSelection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            onClick={() => navigate('/quiz')}
+            onClick={() => navigate('/pre-evaluation')}
             className="bg-white rounded-[32px] border border-slate-200 p-8 hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/5 transition-all cursor-pointer group relative overflow-hidden"
           >
             <div className={cn(

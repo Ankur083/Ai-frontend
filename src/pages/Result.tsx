@@ -13,11 +13,12 @@ import {
   Play,
   Share2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { cn } from '../lib/utils';
 
 export default function Result() {
+  const navigate = useNavigate();
   const score = 85;
   const total = 100;
   const correct = 8;
@@ -102,13 +103,18 @@ export default function Result() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
-              Continue Learning Path
+            <button 
+              onClick={() => navigate('/learning-video')}
+              className="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
+            >
+              Next Learning Module
               <ArrowRight size={20} />
             </button>
-            <button className="flex-1 bg-white text-slate-700 border border-slate-200 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
-              <RotateCcw size={20} />
-              Retake Quiz
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="flex-1 bg-white text-slate-700 border border-slate-200 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+            >
+              Back to Dashboard
             </button>
           </div>
         </div>
