@@ -27,6 +27,9 @@ export default function Result() {
   React.useEffect(() => {
     const fetchReport = async () => {
       const storedPlan = localStorage.getItem('currentStudyPlan');
+      const storedReport = localStorage.getItem('finalReport');
+      const storedScore = localStorage.getItem('finalScore');
+
       if (!storedPlan) {
         navigate('/goal-input');
         return;
@@ -34,10 +37,16 @@ export default function Result() {
 
       const p: StudyPlan = JSON.parse(storedPlan);
       setPlan(p);
+
+      if (storedReport) {
+        setReport(JSON.parse(storedReport));
+        setIsLoading(false);
+        return;
+      }
       
       try {
-        // For now, let's assume a generic high score since they finished all topics
-        const r = await generateFinalReport(p.topic, p.subTopics.map(s => s.title), 85);
+        const score = parseInt(storedScore || '85');
+        const r = await generateFinalReport(p.topic, p.subTopics.map(s => s.title), score);
         setReport(r);
       } catch (error) {
         console.error(error);

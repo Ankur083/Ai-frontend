@@ -7,8 +7,7 @@ import {
   ChevronLeft, 
   CheckCircle2,
   Loader2,
-  XCircle,
-  RefreshCw,
+  Trophy,
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -16,37 +15,32 @@ import { cn } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { generateTopicQuiz, QuizQuestion, StudyPlan } from '../lib/gemini';
+import { generateFinalQuiz, QuizQuestion, StudyPlan, generateFinalReport } from '../lib/gemini';
 
-export default function Quiz() {
+export default function FinalQuiz() {
   const [questions, setQuestions] = React.useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
   const [answers, setAnswers] = React.useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = React.useState(600); // 10 minutes
+  const [timeLeft, setTimeLeft] = React.useState(1200); // 20 minutes for final
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFinished, setIsFinished] = React.useState(false);
-  const [showResult, setShowResult] = React.useState(false);
   const [score, setScore] = React.useState(0);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchQuiz = async () => {
       const storedPlan = localStorage.getItem('currentStudyPlan');
-      const storedIndex = localStorage.getItem('currentTopicIndex');
-      const difficulty = localStorage.getItem('currentDifficulty') || 'Beginner';
-      
       if (!storedPlan) {
         navigate('/goal-input');
         return;
       }
 
       const plan: StudyPlan = JSON.parse(storedPlan);
-      const index = parseInt(storedIndex || '0');
-      const subTopic = plan.subTopics[index];
+      const subTopicTitles = plan.subTopics.map(s => s.title);
 
       try {
-        const q = await generateTopicQuiz(plan.topic, subTopic.title, difficulty);
+        const q = await generateFinalQuiz(plan.topic, subTopicTitles);
         setQuestions(q);
       } catch (error) {
         console.error(error);
@@ -85,7 +79,7 @@ export default function Quiz() {
     }
   };
 
-  const calculateResult = (finalAnswers: number[]) => {
+  const calculateResult = async (finalAnswers: number[]) => {
     let correct = 0;
     questions.forEach((q, i) => {
       if (finalAnswers[i] === q.correctAnswer) correct++;
@@ -93,28 +87,24 @@ export default function Quiz() {
     const finalScore = (correct / questions.length) * 100;
     setScore(finalScore);
     setIsFinished(true);
-    setShowResult(true);
+
+    // Generate final report
+    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}') as StudyPlan;
+    try {
+      const report = await generateFinalReport(
+        storedPlan.topic, 
+        storedPlan.subTopics.map(s => s.title), 
+        finalScore
+      );
+      localStorage.setItem('finalReport', JSON.stringify(report));
+      localStorage.setItem('finalScore', finalScore.toString());
+    } catch (error) {
+      console.error("Failed to generate report:", error);
+    }
   };
 
-  const handleContinue = () => {
-    const storedIndex = parseInt(localStorage.getItem('currentTopicIndex') || '0');
-    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}') as StudyPlan;
-
-    if (score >= 80) {
-      // Pass -> Next topic
-      if (storedIndex < storedPlan.subTopics.length - 1) {
-        localStorage.setItem('currentTopicIndex', (storedIndex + 1).toString());
-        localStorage.removeItem('isReteach');
-        navigate('/learning-engine');
-      } else {
-        // All topics done -> Final Quiz
-        navigate('/final-quiz');
-      }
-    } else {
-      // Fail -> Re-teach
-      localStorage.setItem('isReteach', 'true');
-      navigate('/learning-engine');
-    }
+  const handleFinish = () => {
+    navigate('/result');
   };
 
   const handlePrev = () => {
@@ -129,7 +119,7 @@ export default function Quiz() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
-          <p className="text-slate-500 font-medium">Generating your quiz...</p>
+          <p className="text-slate-500 font-medium">Generating your final assessment...</p>
         </div>
       </div>
     );
@@ -151,7 +141,7 @@ export default function Quiz() {
             {/* Header */}
             <Card className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-8 rounded-[32px] border-slate-100">
               <div>
-                <h1 className="text-xl font-extrabold text-slate-900">Module Knowledge Check</h1>
+                <h1 className="text-xl font-extrabold text-slate-900">Final Mastery Assessment</h1>
                 <p className="text-slate-500 text-sm mt-1 font-medium tracking-tight">Question {currentQuestion + 1} of {questions.length}</p>
               </div>
               <div className="flex items-center gap-4">
@@ -231,7 +221,7 @@ export default function Quiz() {
                 className="px-12 py-6 rounded-2xl shadow-xl shadow-indigo-500/20"
                 icon={<ChevronRight size={20} />}
               >
-                {currentQuestion === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+                {currentQuestion === questions.length - 1 ? 'Finish Assessment' : 'Next Question'}
               </Button>
             </div>
           </motion.div>
@@ -243,15 +233,12 @@ export default function Quiz() {
             className="max-w-2xl mx-auto"
           >
             <Card className="p-16 text-center rounded-[48px] border-slate-100 shadow-2xl">
-              <div className={cn(
-                "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl",
-                score >= 80 ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
-              )}>
-                {score >= 80 ? <CheckCircle2 size={48} /> : <XCircle size={48} />}
+              <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+                <Trophy size={48} />
               </div>
               
               <h1 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">
-                {score >= 80 ? 'Mastery Achieved!' : 'Keep Practicing!'}
+                Course Completed!
               </h1>
               
               <div className="text-6xl font-black text-indigo-600 mb-6 tracking-tighter">
@@ -259,34 +246,16 @@ export default function Quiz() {
               </div>
               
               <p className="text-slate-500 text-lg mb-12 leading-relaxed">
-                {score >= 80 
-                  ? "Excellent work! You've demonstrated a strong understanding of this module. Ready to move forward?"
-                  : "You're almost there! We recommend reviewing the lesson content once more to solidify your understanding."
-                }
+                Congratulations! You've completed your personalized learning path. We're generating your final performance report now.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {score < 80 && (
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => {
-                      localStorage.setItem('isReteach', 'true');
-                      navigate('/learning-engine');
-                    }}
-                    className="px-10 py-6 rounded-2xl"
-                    icon={<RefreshCw size={20} />}
-                  >
-                    Review Lesson
-                  </Button>
-                )}
-                <Button 
-                  onClick={handleContinue}
-                  className="px-12 py-6 rounded-2xl shadow-xl shadow-indigo-500/20"
-                  icon={<ArrowRight size={20} />}
-                >
-                  {score >= 80 ? 'Next Module' : 'Try Again'}
-                </Button>
-              </div>
+              <Button 
+                onClick={handleFinish}
+                className="w-full py-8 rounded-3xl text-xl shadow-xl shadow-indigo-500/20"
+                icon={<ArrowRight size={24} />}
+              >
+                View Final Report
+              </Button>
             </Card>
           </motion.div>
         )}

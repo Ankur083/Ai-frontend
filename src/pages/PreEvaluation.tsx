@@ -61,7 +61,7 @@ export default function PreEvaluation() {
       localStorage.setItem('currentDifficulty', difficulty);
       localStorage.setItem('currentTopicIndex', '0');
       
-      setTimeout(() => navigate('/learning-video'), 2000);
+      setTimeout(() => navigate('/learning-engine'), 2000);
     }
   };
 
