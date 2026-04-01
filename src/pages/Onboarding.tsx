@@ -23,6 +23,13 @@ const STEPS = [
     color: 'bg-indigo-600'
   },
   {
+    id: 'basic-info',
+    title: 'Basic Information',
+    description: 'Tell us about your current academic status.',
+    icon: BookOpen,
+    color: 'bg-blue-600'
+  },
+  {
     id: 'goals',
     title: 'What are your goals?',
     description: 'Select the areas you want to focus on.',
@@ -38,11 +45,21 @@ const STEPS = [
   }
 ];
 
+const ACADEMIC_LEVELS = [
+  '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade',
+  'B.Tech (CSE)', 'B.Tech (ECE)', 'B.Tech (ME)', 'B.Tech (CE)', 'B.Tech (IT)',
+  'B.Sc', 'B.C.A', 'M.Tech', 'M.C.A', 'M.Sc', 'Other'
+];
+
+const BOARDS = [
+  'CBSE', 'ICSE', 'State Board', 'IB', 'IGCSE', 'University'
+];
+
 const GOALS = [
-  { id: 'dev', label: 'Web Development', icon: BookOpen },
-  { id: 'design', label: 'UI/UX Design', icon: Sparkles },
-  { id: 'business', label: 'Business & Strategy', icon: Target },
-  { id: 'data', label: 'Data Science', icon: Zap },
+  { id: 'academics', label: 'Academic Excellence', icon: BookOpen },
+  { id: 'competitive', label: 'Competitive Exams', icon: Target },
+  { id: 'skills', label: 'Skill Development', icon: Zap },
+  { id: 'creativity', label: 'Creative Arts', icon: Sparkles },
 ];
 
 const LEVELS = [
@@ -53,6 +70,8 @@ const LEVELS = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = React.useState(0);
+  const [selectedClass, setSelectedClass] = React.useState<string | null>(null);
+  const [selectedBoard, setSelectedBoard] = React.useState<string | null>(null);
   const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
   const [selectedLevel, setSelectedLevel] = React.useState<string | null>(null);
   const navigate = useNavigate();
@@ -61,7 +80,7 @@ export default function Onboarding() {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigate('/quiz-topics');
+      navigate('/goal-input');
     }
   };
 
@@ -138,6 +157,50 @@ export default function Onboarding() {
               )}
 
               {currentStep === 1 && (
+                <div className="space-y-8 w-full text-left">
+                  <div className="space-y-4">
+                    <label className="text-sm font-bold text-slate-700 ml-1">Which class/degree are you in?</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                      {ACADEMIC_LEVELS.map((cls) => (
+                        <button
+                          key={cls}
+                          onClick={() => setSelectedClass(cls)}
+                          className={cn(
+                            "px-4 py-3 rounded-xl border-2 transition-all font-bold text-sm text-center",
+                            selectedClass === cls
+                              ? "border-indigo-600 bg-indigo-50 text-indigo-900"
+                              : "border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200"
+                          )}
+                        >
+                          {cls}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-sm font-bold text-slate-700 ml-1">Select your Board / University</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {BOARDS.map((board) => (
+                        <button
+                          key={board}
+                          onClick={() => setSelectedBoard(board)}
+                          className={cn(
+                            "px-4 py-3 rounded-xl border-2 transition-all font-bold text-sm",
+                            selectedBoard === board
+                              ? "border-indigo-600 bg-indigo-50 text-indigo-900"
+                              : "border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200"
+                          )}
+                        >
+                          {board}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 2 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                   {GOALS.map((goal) => (
                     <button
@@ -165,7 +228,7 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {currentStep === 2 && (
+              {currentStep === 3 && (
                 <div className="space-y-4 w-full">
                   {LEVELS.map((level) => (
                     <button
@@ -211,8 +274,9 @@ export default function Onboarding() {
               <Button
                 onClick={handleNext}
                 disabled={
-                  (currentStep === 1 && selectedGoals.length === 0) ||
-                  (currentStep === 2 && !selectedLevel)
+                  (currentStep === 1 && (!selectedClass || !selectedBoard)) ||
+                  (currentStep === 2 && selectedGoals.length === 0) ||
+                  (currentStep === 3 && !selectedLevel)
                 }
                 className="px-10"
                 icon={<ChevronRight size={20} />}

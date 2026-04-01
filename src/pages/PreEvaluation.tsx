@@ -3,51 +3,80 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Brain, 
   ChevronRight, 
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ProgressBar } from '../components/ui/ProgressBar';
-
-const MOCK_QUESTIONS = [
-  {
-    id: 'p1',
-    text: 'How familiar are you with React Hooks?',
-    options: ['Never heard of them', 'Know what they are', 'Used them in projects', 'Expert level'],
-  },
-  {
-    id: 'p2',
-    text: 'What is your preferred way to manage state?',
-    options: ['useState/useReducer', 'Redux/Zustand', 'Context API', 'Prop drilling'],
-  },
-  {
-    id: 'p3',
-    text: 'Have you worked with TypeScript before?',
-    options: ['No', 'A little', 'Regularly', 'Daily'],
-  }
-];
+import { generatePreEvalQuestions, EvalQuestion, StudyPlan } from '../lib/gemini';
 
 export default function PreEvaluation() {
+  const [questions, setQuestions] = React.useState<EvalQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
+  const [score, setScore] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [isFinished, setIsFinished] = React.useState(false);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const fetchQuestions = async () => {
+      const storedPlan = localStorage.getItem('currentStudyPlan');
+      if (!storedPlan) {
+        navigate('/goal-input');
+        return;
+      }
+      const plan: StudyPlan = JSON.parse(storedPlan);
+      try {
+        const q = await generatePreEvalQuestions(plan.topic);
+        setQuestions(q);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, [navigate]);
 
   const handleNext = () => {
     if (selectedOption === null) return;
     
-    if (currentQuestion < MOCK_QUESTIONS.length - 1) {
+    if (selectedOption === questions[currentQuestion].correctAnswer) {
+      setScore(prev => prev + 1);
+    }
+
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedOption(null);
     } else {
       setIsFinished(true);
-      setTimeout(() => navigate('/learning-video'), 1500);
+      
+      // Determine starting difficulty based on score
+      const finalScore = selectedOption === questions[currentQuestion].correctAnswer ? score + 1 : score;
+      const difficulty = finalScore >= 2 ? 'Intermediate' : 'Beginner';
+      localStorage.setItem('currentDifficulty', difficulty);
+      localStorage.setItem('currentTopicIndex', '0');
+      
+      setTimeout(() => navigate('/learning-video'), 2000);
     }
   };
 
-  const progress = ((currentQuestion + 1) / MOCK_QUESTIONS.length) * 100;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500 font-medium">Generating your assessment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
@@ -68,7 +97,7 @@ export default function PreEvaluation() {
                     </div>
                     <div>
                       <h1 className="text-xl font-bold text-slate-900">Pre-Evaluation</h1>
-                      <p className="text-slate-500 text-sm">Question {currentQuestion + 1} of {MOCK_QUESTIONS.length}</p>
+                      <p className="text-slate-500 text-sm">Question {currentQuestion + 1} of {questions.length}</p>
                     </div>
                   </div>
                   <div className="w-32">
@@ -77,11 +106,11 @@ export default function PreEvaluation() {
                 </div>
 
                 <h2 className="text-2xl font-bold text-slate-800 mb-8 leading-tight">
-                  {MOCK_QUESTIONS[currentQuestion].text}
+                  {questions[currentQuestion].text}
                 </h2>
 
                 <div className="space-y-4">
-                  {MOCK_QUESTIONS[currentQuestion].options.map((option, index) => (
+                  {questions[currentQuestion].options.map((option, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedOption(index)}
@@ -110,7 +139,7 @@ export default function PreEvaluation() {
                     className="px-10"
                     icon={<ChevronRight size={20} />}
                   >
-                    {currentQuestion === MOCK_QUESTIONS.length - 1 ? 'Finish Assessment' : 'Next Question'}
+                    {currentQuestion === questions.length - 1 ? 'Finish Assessment' : 'Next Question'}
                   </Button>
                 </div>
               </Card>
@@ -127,7 +156,7 @@ export default function PreEvaluation() {
                 </div>
                 <h1 className="text-3xl font-bold text-slate-900 mb-4">Assessment Complete</h1>
                 <p className="text-slate-500 text-lg">
-                  We've analyzed your responses. Redirecting you to your first learning module...
+                  We've analyzed your responses. Adjusting your learning path to <span className="font-bold text-indigo-600">{localStorage.getItem('currentDifficulty')}</span> level.
                 </p>
               </Card>
             </motion.div>
