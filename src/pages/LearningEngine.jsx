@@ -11,15 +11,14 @@ import {
   Youtube,
   RefreshCw
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { StudyPlan, generateTopicContent, TopicContent } from '../lib/gemini';
+import { generateTopicContent } from '../lib/gemini';
 
 export default function LearningEngine() {
-  const [plan, setPlan] = React.useState<StudyPlan | null>(null);
+  const [plan, setPlan] = React.useState(null);
   const [currentTopicIndex, setCurrentTopicIndex] = React.useState(0);
-  const [content, setContent] = React.useState<TopicContent | null>(null);
+  const [content, setContent] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const navigate = useNavigate();
 
@@ -39,7 +38,7 @@ export default function LearningEngine() {
     }
   }, [navigate]);
 
-  const fetchContent = async (topic: string, subTopic: string, isReteach: boolean) => {
+  const fetchContent = async (topic, subTopic, isReteach) => {
     setIsLoading(true);
     try {
       // In a real RAG system, we'd pass the isReteach flag to the backend

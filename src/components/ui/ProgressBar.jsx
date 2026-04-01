@@ -2,14 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { cn } from '../../lib/utils';
 
-interface ProgressBarProps {
-  value: number;
-  max?: number;
-  className?: string;
-  barClassName?: string;
-}
-
-export const ProgressBar = ({ value, max = 100, className, barClassName }: ProgressBarProps) => {
+export const ProgressBar = ({ value, max = 100, className, barClassName }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   return (

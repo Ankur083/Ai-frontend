@@ -14,12 +14,10 @@ import {
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { StudyPlan as StudyPlanType } from '../lib/gemini';
 import { cn } from '../lib/utils';
 
 export default function StudyPlan() {
-  const [plan, setPlan] = React.useState<StudyPlanType | null>(null);
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [plan, setPlan] = React.useState(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {

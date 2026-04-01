@@ -1,18 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Play, Star, Clock, BookOpen, Users, Plus } from 'lucide-react';
-import { Course } from '../../types';
+import { Play, Star, Clock, BookOpen, Plus } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Card } from '../ui/Card';
 import { ProgressBar } from '../ui/ProgressBar';
 
-interface CourseCardProps {
-  course: Course;
-  variant?: 'horizontal' | 'vertical';
-  index?: number;
-}
-
-export const CourseCard: React.FC<CourseCardProps> = ({ course, variant = 'vertical', index = 0 }) => {
+export const CourseCard = ({ course, variant = 'vertical', index = 0 }) => {
   if (variant === 'horizontal') {
     return (
       <Card padding="none" className="flex flex-col sm:flex-row gap-6 hover:border-indigo-200 transition-colors group overflow-hidden p-5">

@@ -1,32 +1,24 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight, Github, Chrome } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
 import { AuthWrapper } from '../components/shared/AuthWrapper';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
-export default function Register() {
+export default function Login() {
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/onboarding');
+    navigate('/dashboard');
   };
 
   return (
     <AuthWrapper 
-      title="Join Us" 
-      subtitle="Start your personalized learning path"
+      title="Welcome Back" 
+      subtitle="Continue your learning journey"
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <Input 
-          label="Full Name"
-          type="text"
-          required
-          placeholder="Alex Johnson"
-          icon={<User size={20} />}
-        />
-
+      <form onSubmit={handleSubmit} className="space-y-6">
         <Input 
           label="Email Address"
           type="email"
@@ -35,21 +27,26 @@ export default function Register() {
           icon={<Mail size={20} />}
         />
 
-        <Input 
-          label="Password"
-          type="password"
-          required
-          placeholder="••••••••"
-          icon={<Lock size={20} />}
-        />
+        <div className="space-y-2">
+          <div className="flex justify-between items-center ml-1">
+            <label className="text-sm font-semibold text-slate-700">Password</label>
+            <Link to="/forgot-password" size={20} className="text-xs font-medium text-indigo-600 hover:underline">Forgot password?</Link>
+          </div>
+          <Input 
+            type="password"
+            required
+            placeholder="••••••••"
+            icon={<Lock size={20} />}
+          />
+        </div>
 
         <Button 
           type="submit" 
-          className="w-full mt-2" 
+          className="w-full" 
           size="xl"
           rightIcon={<ArrowRight size={20} />}
         >
-          Create Account
+          Sign In
         </Button>
       </form>
 
@@ -58,7 +55,7 @@ export default function Register() {
           <div className="w-full border-t border-slate-100"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-4 text-slate-400 font-medium tracking-wider">Or register with</span>
+          <span className="bg-white px-4 text-slate-400 font-medium tracking-wider">Or continue with</span>
         </div>
       </div>
 
@@ -72,8 +69,8 @@ export default function Register() {
       </div>
 
       <p className="mt-10 text-center text-slate-600 text-sm">
-        Already have an account?{' '}
-        <Link to="/login" className="text-indigo-600 font-bold hover:underline">Sign In</Link>
+        Don't have an account?{' '}
+        <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create Account</Link>
       </p>
     </AuthWrapper>
   );

@@ -16,17 +16,16 @@ import { cn } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { generateTopicQuiz, QuizQuestion, StudyPlan } from '../lib/gemini';
+import { generateTopicQuiz } from '../lib/gemini';
 
 export default function Quiz() {
-  const [questions, setQuestions] = React.useState<QuizQuestion[]>([]);
+  const [questions, setQuestions] = React.useState([]);
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
-  const [answers, setAnswers] = React.useState<number[]>([]);
+  const [selectedOption, setSelectedOption] = React.useState(null);
+  const [answers, setAnswers] = React.useState([]);
   const [timeLeft, setTimeLeft] = React.useState(600); // 10 minutes
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFinished, setIsFinished] = React.useState(false);
-  const [showResult, setShowResult] = React.useState(false);
   const [score, setScore] = React.useState(0);
   const navigate = useNavigate();
 
@@ -41,7 +40,7 @@ export default function Quiz() {
         return;
       }
 
-      const plan: StudyPlan = JSON.parse(storedPlan);
+      const plan = JSON.parse(storedPlan);
       const index = parseInt(storedIndex || '0');
       const subTopic = plan.subTopics[index];
 
@@ -64,7 +63,7 @@ export default function Quiz() {
     }
   }, [timeLeft, isFinished, isLoading]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -85,7 +84,7 @@ export default function Quiz() {
     }
   };
 
-  const calculateResult = (finalAnswers: number[]) => {
+  const calculateResult = (finalAnswers) => {
     let correct = 0;
     questions.forEach((q, i) => {
       if (finalAnswers[i] === q.correctAnswer) correct++;
@@ -93,12 +92,11 @@ export default function Quiz() {
     const finalScore = (correct / questions.length) * 100;
     setScore(finalScore);
     setIsFinished(true);
-    setShowResult(true);
   };
 
   const handleContinue = () => {
     const storedIndex = parseInt(localStorage.getItem('currentTopicIndex') || '0');
-    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}') as StudyPlan;
+    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}');
 
     if (score >= 80) {
       // Pass -> Next topic

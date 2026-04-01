@@ -1,10 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { 
-  Search, 
-  Filter, 
-  Plus
-} from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { MOCK_COURSES } from '../constants';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/Button';

@@ -70,10 +70,10 @@ const LEVELS = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [selectedClass, setSelectedClass] = React.useState<string | null>(null);
-  const [selectedBoard, setSelectedBoard] = React.useState<string | null>(null);
-  const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
-  const [selectedLevel, setSelectedLevel] = React.useState<string | null>(null);
+  const [selectedClass, setSelectedClass] = React.useState(null);
+  const [selectedBoard, setSelectedBoard] = React.useState(null);
+  const [selectedGoals, setSelectedGoals] = React.useState([]);
+  const [selectedLevel, setSelectedLevel] = React.useState(null);
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -90,7 +90,7 @@ export default function Onboarding() {
     }
   };
 
-  const toggleGoal = (id: string) => {
+  const toggleGoal = (id) => {
     setSelectedGoals(prev => 
       prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]
     );

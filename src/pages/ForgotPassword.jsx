@@ -9,7 +9,7 @@ export default function ForgotPassword() {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
   };

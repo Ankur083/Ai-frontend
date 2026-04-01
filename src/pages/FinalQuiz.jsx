@@ -15,13 +15,13 @@ import { cn } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { generateFinalQuiz, QuizQuestion, StudyPlan, generateFinalReport } from '../lib/gemini';
+import { generateFinalQuiz, generateFinalReport } from '../lib/gemini';
 
 export default function FinalQuiz() {
-  const [questions, setQuestions] = React.useState<QuizQuestion[]>([]);
+  const [questions, setQuestions] = React.useState([]);
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
-  const [answers, setAnswers] = React.useState<number[]>([]);
+  const [selectedOption, setSelectedOption] = React.useState(null);
+  const [answers, setAnswers] = React.useState([]);
   const [timeLeft, setTimeLeft] = React.useState(1200); // 20 minutes for final
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFinished, setIsFinished] = React.useState(false);
@@ -36,7 +36,7 @@ export default function FinalQuiz() {
         return;
       }
 
-      const plan: StudyPlan = JSON.parse(storedPlan);
+      const plan = JSON.parse(storedPlan);
       const subTopicTitles = plan.subTopics.map(s => s.title);
 
       try {
@@ -58,7 +58,7 @@ export default function FinalQuiz() {
     }
   }, [timeLeft, isFinished, isLoading]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -79,7 +79,7 @@ export default function FinalQuiz() {
     }
   };
 
-  const calculateResult = async (finalAnswers: number[]) => {
+  const calculateResult = async (finalAnswers) => {
     let correct = 0;
     questions.forEach((q, i) => {
       if (finalAnswers[i] === q.correctAnswer) correct++;
@@ -89,7 +89,7 @@ export default function FinalQuiz() {
     setIsFinished(true);
 
     // Generate final report
-    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}') as StudyPlan;
+    const storedPlan = JSON.parse(localStorage.getItem('currentStudyPlan') || '{}');
     try {
       const report = await generateFinalReport(
         storedPlan.topic, 

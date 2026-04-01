@@ -9,7 +9,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [isSuccess, setIsSuccess] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSuccess(true);
     setTimeout(() => navigate('/login'), 2000);

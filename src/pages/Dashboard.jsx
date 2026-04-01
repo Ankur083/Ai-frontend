@@ -1,12 +1,10 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { 
   BookOpen, 
   Clock, 
   Trophy, 
   Zap, 
   ArrowRight,
-  Play,
   CheckCircle2,
   TrendingUp
 } from 'lucide-react';
@@ -140,8 +138,8 @@ export default function Dashboard() {
                 { name: 'Sarah Connor', points: '9,500', rank: 4 },
               ].map((user, i) => (
                 <div key={i} className={cn(
-                  "flex items-center justify-between p-3 rounded-2xl transition-colors",
-                  user.me ? "bg-indigo-50 border border-indigo-100" : "hover:bg-slate-50"
+                   "flex items-center justify-between p-3 rounded-2xl transition-colors",
+                   user.me ? "bg-indigo-50 border border-indigo-100" : "hover:bg-slate-50"
                 )}>
                   <div className="flex items-center gap-3">
                     <span className={cn(

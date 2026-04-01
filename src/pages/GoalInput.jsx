@@ -4,16 +4,15 @@ import { Search, Sparkles, ArrowRight, Brain, Target, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { generateStudyPlan, StudyPlan } from '../lib/gemini';
+import { generateStudyPlan } from '../lib/gemini';
 
 export default function GoalInput() {
   const [goal, setGoal] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!goal.trim()) return;
 

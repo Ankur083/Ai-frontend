@@ -1,13 +1,7 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  icon?: React.ReactNode;
-  error?: string;
-}
-
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef(
   ({ className, label, icon, error, ...props }, ref) => {
     return (
       <div className="space-y-2 w-full">

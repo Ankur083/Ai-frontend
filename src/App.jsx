@@ -15,12 +15,12 @@ import StudyPlan from './pages/StudyPlan';
 import PreEvaluation from './pages/PreEvaluation';
 import LearningEngine from './pages/LearningEngine';
 import Dashboard from './pages/Dashboard';
+import CourseAssign from './pages/CourseAssign';
+import QuizTopicSelection from './pages/QuizTopicSelection';
 import Quiz from './pages/Quiz';
 import FinalQuiz from './pages/FinalQuiz';
-import QuizTopicSelection from './pages/QuizTopicSelection';
 import Profile from './pages/Profile';
 import Result from './pages/Result';
-import CourseAssign from './pages/CourseAssign';
 
 export default function App() {
   return (

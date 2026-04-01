@@ -2,42 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-export interface SubTopic {
-  id: string;
-  title: string;
-  description: string;
-}
-
-export interface StudyPlan {
-  topic: string;
-  subTopics: SubTopic[];
-  prerequisites: string[];
-}
-
-export interface EvalQuestion {
-  id: string;
-  text: string;
-  options: string[];
-  correctAnswer: number;
-}
-
-export interface QuizQuestion {
-  id: string;
-  text: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-}
-
-export interface FinalReport {
-  summary: string;
-  strengths: string[];
-  weaknesses: string[];
-  recommendations: string[];
-  nextSteps: string[];
-}
-
-export async function generateStudyPlan(goal: string): Promise<StudyPlan> {
+export async function generateStudyPlan(goal) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate a detailed study plan for the learning goal: "${goal}". 
@@ -72,14 +37,14 @@ export async function generateStudyPlan(goal: string): Promise<StudyPlan> {
   });
 
   try {
-    return JSON.parse(response.text || "{}") as StudyPlan;
+    return JSON.parse(response.text || "{}");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate study plan");
   }
 }
 
-export async function generatePreEvalQuestions(topic: string): Promise<EvalQuestion[]> {
+export async function generatePreEvalQuestions(topic) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate 3 pre-evaluation multiple-choice questions to assess a student's current knowledge of "${topic}". 
@@ -107,14 +72,14 @@ export async function generatePreEvalQuestions(topic: string): Promise<EvalQuest
   });
 
   try {
-    return JSON.parse(response.text || "[]") as EvalQuestion[];
+    return JSON.parse(response.text || "[]");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate evaluation questions");
   }
 }
 
-export async function generateTopicQuiz(topic: string, subTopic: string, difficulty: string): Promise<QuizQuestion[]> {
+export async function generateTopicQuiz(topic, subTopic, difficulty) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate a 5-question multiple-choice quiz for the subtopic "${subTopic}" within the main topic "${topic}". 
@@ -144,20 +109,14 @@ export async function generateTopicQuiz(topic: string, subTopic: string, difficu
   });
 
   try {
-    return JSON.parse(response.text || "[]") as QuizQuestion[];
+    return JSON.parse(response.text || "[]");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate quiz questions");
   }
 }
 
-export interface TopicContent {
-  text: string;
-  examples: string[];
-  videoSearchQuery: string;
-}
-
-export async function generateTopicContent(topic: string, subTopic: string): Promise<TopicContent> {
+export async function generateTopicContent(topic, subTopic) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate educational content for the subtopic "${subTopic}" within the main topic "${topic}". 
@@ -178,14 +137,14 @@ export async function generateTopicContent(topic: string, subTopic: string): Pro
   });
 
   try {
-    return JSON.parse(response.text || "{}") as TopicContent;
+    return JSON.parse(response.text || "{}");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate topic content");
   }
 }
 
-export async function generateFinalQuiz(topic: string, subTopics: string[]): Promise<QuizQuestion[]> {
+export async function generateFinalQuiz(topic, subTopics) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate a comprehensive final quiz for the topic "${topic}" covering these subtopics: ${subTopics.join(", ")}. 
@@ -215,14 +174,14 @@ export async function generateFinalQuiz(topic: string, subTopics: string[]): Pro
   });
 
   try {
-    return JSON.parse(response.text || "[]") as QuizQuestion[];
+    return JSON.parse(response.text || "[]");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate final quiz");
   }
 }
 
-export async function generateFinalReport(topic: string, subTopics: string[], score: number): Promise<FinalReport> {
+export async function generateFinalReport(topic, subTopics, score) {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate a final learning report for the topic "${topic}". 
@@ -247,7 +206,7 @@ export async function generateFinalReport(topic: string, subTopics: string[], sc
   });
 
   try {
-    return JSON.parse(response.text || "{}") as FinalReport;
+    return JSON.parse(response.text || "{}");
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     throw new Error("Failed to generate final report");

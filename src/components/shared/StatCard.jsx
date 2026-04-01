@@ -1,19 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Card } from '../ui/Card';
 
-interface StatCardProps {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-  bg?: string;
-  index?: number;
-}
-
-export const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color, bg, index = 0 }) => {
+export const StatCard = ({ label, value, icon, color, bg, index = 0 }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

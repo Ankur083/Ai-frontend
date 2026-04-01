@@ -2,13 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { GraduationCap } from 'lucide-react';
 
-interface AuthWrapperProps {
-  children: React.ReactNode;
-  title: string;
-  subtitle: string;
-}
-
-export const AuthWrapper = ({ children, title, subtitle }: AuthWrapperProps) => {
+export const AuthWrapper = ({ children, title, subtitle }) => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <motion.div 

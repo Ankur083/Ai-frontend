@@ -1,6 +1,4 @@
-import { User, Course } from './types';
-
-export const MOCK_USER: User = {
+export const MOCK_USER = {
   id: '1',
   name: 'Alex Johnson',
   email: 'alex@example.com',
@@ -14,7 +12,7 @@ export const MOCK_USER: User = {
   }
 };
 
-export const MOCK_COURSES: Course[] = [
+export const MOCK_COURSES = [
   {
     id: 'c1',
     title: 'Advanced React Patterns',

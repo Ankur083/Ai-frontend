@@ -16,13 +16,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { generateFinalReport, FinalReport, StudyPlan } from '../lib/gemini';
+import { generateFinalReport } from '../lib/gemini';
 
 export default function Result() {
   const navigate = useNavigate();
-  const [report, setReport] = React.useState<FinalReport | null>(null);
+  const [report, setReport] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [plan, setPlan] = React.useState<StudyPlan | null>(null);
+  const [plan, setPlan] = React.useState(null);
 
   React.useEffect(() => {
     const fetchReport = async () => {
@@ -35,7 +35,7 @@ export default function Result() {
         return;
       }
 
-      const p: StudyPlan = JSON.parse(storedPlan);
+      const p = JSON.parse(storedPlan);
       setPlan(p);
 
       if (storedReport) {

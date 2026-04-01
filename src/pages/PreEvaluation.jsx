@@ -11,12 +11,12 @@ import { cn } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { generatePreEvalQuestions, EvalQuestion, StudyPlan } from '../lib/gemini';
+import { generatePreEvalQuestions } from '../lib/gemini';
 
 export default function PreEvaluation() {
-  const [questions, setQuestions] = React.useState<EvalQuestion[]>([]);
+  const [questions, setQuestions] = React.useState([]);
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
+  const [selectedOption, setSelectedOption] = React.useState(null);
   const [score, setScore] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFinished, setIsFinished] = React.useState(false);
@@ -29,7 +29,7 @@ export default function PreEvaluation() {
         navigate('/goal-input');
         return;
       }
-      const plan: StudyPlan = JSON.parse(storedPlan);
+      const plan = JSON.parse(storedPlan);
       try {
         const q = await generatePreEvalQuestions(plan.topic);
         setQuestions(q);

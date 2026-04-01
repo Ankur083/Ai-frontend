@@ -1,12 +1,7 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'glass' | 'dark';
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-}
-
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+export const Card = React.forwardRef(
   ({ className, variant = 'default', padding = 'md', children, ...props }, ref) => {
     const variants = {
       default: 'bg-white border border-slate-200 shadow-sm',
